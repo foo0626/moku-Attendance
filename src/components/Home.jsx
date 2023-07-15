@@ -4,9 +4,15 @@ import { DateTime } from 'luxon';
 import { useNavigate } from 'react-router-dom';
 import '../styles.css';
 
+const homeUrl = process.env.PUBLIC_URL;
+
+
 function Home() {
-  const [currentDate, setCurrentDate] = useState(DateTime.now());
+
   const navigate = useNavigate();
+
+  
+  const [currentDate, setCurrentDate] = useState(DateTime.now());
 
   // 月の週数を取得する関数
   const getWeeksInMonth = (date) => {
@@ -66,7 +72,7 @@ function Home() {
     const year = selectedDate.year;
     const month = selectedDate.month;
     const day = selectedDate.day;
-    navigate(`/attend?year=${year}&month=${month}&day=${day}`);
+    navigate(`${homeUrl}/userattend?year=${year}&month=${month}&day=${day}`);
   };
 
   const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
