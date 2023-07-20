@@ -31,13 +31,13 @@
   grid-gap: 5px;
 }
 
-.day.currentMonth {
-  background-color: #f0f0f0;
-}
+/* .day.currentMonth {
+  background-color: #da3c3c;
+} */
 
 button {
   background-color: #4caf50;
-  color: white;
+  color: rgb(0, 0, 0);
   border: none;
   padding: 5px 10px;
   border-radius: 3px;
@@ -45,7 +45,7 @@ button {
 }
 
 button:hover {
-  background-color: #45a049;
+  background-color: #b4b4b4;
 }
 
 /* calendar-app/src/Home.css

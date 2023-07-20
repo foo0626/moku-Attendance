@@ -7,6 +7,10 @@ const UserAttend = () => {
   const month = searchParams.get('month');
   const day = searchParams.get('day');
 
+  // const updateAttendance = () => {
+
+  // }
+
   return (
     <>
       <h1>出欠登録</h1>

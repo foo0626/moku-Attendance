@@ -11,6 +11,9 @@ import UserRegistration from './components/UserRegistration';
 import { useSelector } from 'react-redux';
 import Login from './components/Login';
 import Navigation from './components/Navigation';
+import UserSetting from './components/UserSetting';
+import PracticeCalender from './components/PracticeCalender';
+import PracticeDetail from './components/PracticeDetail';
 
 
 const homeUrl = process.env.PUBLIC_URL;
@@ -38,6 +41,9 @@ function App() {
           <Route element={<ProtectedRoute user={user} />}>
             <Route path={`${homeUrl}/`} element={<Home />} />
             <Route path={`${homeUrl}/userattend`} element={<UserAttend />} />
+            <Route path={`${homeUrl}/usersetting`} element={<UserSetting />} />
+            <Route path={`${homeUrl}/practicecalender`} element={<PracticeCalender />} />
+            <Route path={`${homeUrl}/practicedetail`} element={<PracticeDetail />} />
           </Route>
         </Routes>
       </ChakraProvider>

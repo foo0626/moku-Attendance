@@ -1,8 +1,10 @@
 // src/components/Home.js
-import React, { useState } from 'react';
-import { DateTime } from 'luxon';
+import React, { useState, useEffect } from 'react';
+import { DateTime, Settings } from 'luxon';
 import { useNavigate } from 'react-router-dom';
 import '../styles.css';
+import { supabase } from '../services/supabase_api';
+import { Box } from '@chakra-ui/react';
 
 const homeUrl = process.env.PUBLIC_URL;
 
@@ -13,13 +15,17 @@ function Home() {
 
   
   const [currentDate, setCurrentDate] = useState(DateTime.now());
+  const [events, setEvents] = useState([]);
+
+  Settings.defaultLocale = "en-US"
+
 
   // 月の週数を取得する関数
   const getWeeksInMonth = (date) => {
     const firstDayOfMonth = date.startOf('month');
-    const startOfWeek = firstDayOfMonth.startOf('week');
-    const endOfWeek = date.endOf('month').endOf('week');
-    return Math.ceil(endOfWeek.diff(startOfWeek, 'weeks').weeks) + 1;
+    const startOfWeek = firstDayOfMonth.startOf('week').minus({days: 1});
+    const endOfWeek = date.endOf('month').endOf('week').minus({days: 1});;
+    return Math.ceil(endOfWeek.diff(startOfWeek, 'weeks').weeks);
   };
 
   // 前月に移動する関数
@@ -33,9 +39,10 @@ function Home() {
   };
 
   // カレンダーを生成する関数
+
   const generateCalendar = () => {
     const weeksInMonth = getWeeksInMonth(currentDate);
-    const monthStart = currentDate.startOf('month').startOf('week');
+    const monthStart = currentDate.startOf('month').startOf('week').minus({days: 1});;
 
     const calendar = [];
     for (let week = 0; week < weeksInMonth; week++) {
@@ -44,16 +51,21 @@ function Home() {
       const days = [];
       for (let day = 0; day < 7; day++) {
         const currentDay = weekStart.plus({ days: day });
+        const currentDateString = currentDay.toFormat('yyyy-LL-dd');
+        const isEventsDay = events.includes(currentDateString);
+        const bgColor = isEventsDay ? 'tomato': 'lightgray'
         const isCurrentMonth = currentDay.hasSame(currentDate, 'month');
 
         days.push(
-          <div
+          <Box bg={bgColor}
             key={day}
+            data-day={currentDateString}
+            data-iseventday={isEventsDay}
             className={`day ${isCurrentMonth ? 'currentMonth' : ''}`}
-            onClick={() => handleDateSelection(currentDay)}
+            onClick={handleDateSelection}
           >
             {isCurrentMonth ? currentDay.day : ''}
-          </div>
+          </Box>
         );
       }
 
@@ -65,14 +77,43 @@ function Home() {
     }
 
     return calendar;
-  };
+  }; //出席するかどうかの機能を作る
+
+  const fetchEvents = async (date) => {
+    const startOfMonth = date.startOf('month').toISO();
+    const endOfMonth = date.endOf('month').toISO();
+
+    let { data: rows, error } = await supabase
+      .from('events')
+      .select('*')
+      .gte('date', startOfMonth)
+      .lte('date', endOfMonth)
+
+      if(error) {
+        console.error('Error: ', error)
+      } else {
+        const events = rows.map( (event) => event.date );
+        setEvents(events);
+        console.log(events)
+      }
+    }
+    
+  useEffect( ()=>{
+    fetchEvents(currentDate);
+  },[currentDate])
+
 
   // 日付選択時の処理
-  const handleDateSelection = (selectedDate) => {
+  const handleDateSelection = (e) => {
+    const isEventsDay = e.currentTarget.getAttribute('data-iseventday') === 'true'
+    const dateString = e.currentTarget.getAttribute('data-day')
+    const selectedDate = DateTime.fromISO(dateString)
     const year = selectedDate.year;
     const month = selectedDate.month;
     const day = selectedDate.day;
-    navigate(`${homeUrl}/userattend?year=${year}&month=${month}&day=${day}`);
+    if (isEventsDay) {
+      navigate(`${homeUrl}/userattend?year=${year}&month=${month}&day=${day}`);
+    }
   };
 
   const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
@@ -86,7 +127,7 @@ function Home() {
       </div>
       <div className="days">
         {weekdays.map((weekday, index) => (
-          <div key={index} className="day">
+          <div key={index} className='day'>
             {weekday}
           </div>
         ))}

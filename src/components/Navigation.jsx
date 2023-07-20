@@ -1,9 +1,10 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { updateSession } from '../Actions';
-import { supabase } from '../services/supabase_api';
-import { Button, } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../services/supabase_api';
+import { Button, Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
+import { HamburgerIcon } from '@chakra-ui/icons';
 
 const homeUrl = process.env.PUBLIC_URL;
 
@@ -14,8 +15,9 @@ const Navigation = () => {
 
 
   const user = useSelector((state) => state.user)
-  const username = user?.user?.user_metadata?.username;
-  const gender = user?.user?.user_metadata?.gender;
+  const admin = user?.user?.user_metadata?.admin;
+  // const username = user?.user?.user_metadata?.username;
+  // const gender = user?.user?.user_metadata?.gender;
   
   
   const handleLogout = async (event) => {
@@ -28,14 +30,27 @@ const Navigation = () => {
     }
   };
 
-  console.log(username)
-
 
   return (
   <>
+    {admin && (
+        <Menu>
+          <MenuButton as={Button} rightIcon={<HamburgerIcon />} variant="outline">
+            メニュー
+          </MenuButton>
+          <MenuList>
+            <MenuItem onClick={() => navigate(`${homeUrl}/usersetting`)}>
+              ユーザー管理
+            </MenuItem>
+            <MenuItem onClick={() => navigate(`${homeUrl}/practicecalender`)}>
+              練習日登録
+            </MenuItem>
+          </MenuList>
+        </Menu>
+      )}
     <div>{user && <Button onClick={handleLogout}>ログアウト</Button>}</div>
-    {username && <div>{username}</div>}
-    {gender && <div>{gender}</div>}
+    {/* {username && <div>{username}</div>}
+    {gender && <div>{gender}</div>} */}
   </>
   )
 }
