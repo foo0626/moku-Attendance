@@ -77,7 +77,7 @@ function Home() {
     }
 
     return calendar;
-  }; //出席するかどうかの機能を作る
+  }; 
 
   const fetchEvents = async (date) => {
     const startOfMonth = date.startOf('month').toISO();
