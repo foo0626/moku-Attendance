@@ -26,7 +26,7 @@ const Navigation = () => {
       navigate(`${homeUrl}/login`),
     );
     if (error) {
-      console.log(error.message);
+      console.error(error.message);
     }
   };
 

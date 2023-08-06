@@ -36,8 +36,7 @@ function PracticeDetail() {
       })
       return
     }
-
-    console.log('成功しました')
+    
     navigate(`${homeUrl}/`);
 
   };//日付をsupabaseに登録できるようにした

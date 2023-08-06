@@ -94,7 +94,6 @@ function Home() {
       } else {
         const events = rows.map( (event) => event.date );
         setEvents(events);
-        console.log(events)
       }
     }
     
@@ -138,88 +137,3 @@ function Home() {
 }
 
 export default Home;
-
-// import React, { useState } from 'react';
-// import { DateTime } from 'luxon';
-// import { useNavigate } from 'react-router-dom';
-// import '../styles.css';
-
-// function Home() {
-//   const [currentDate, setCurrentDate] = useState(DateTime.now());
-
-//   // 月の始まりの曜日によって表示する週の数を決定する
-//   const getWeeksInMonth = (date) => {
-//     const firstDayOfMonth = date.startOf('month');
-//     const startOfWeek = firstDayOfMonth.startOf('week');
-//     const endOfWeek = date.endOf('month').endOf('week');
-
-//     console.log(firstDayOfMonth);
-//     console.log(startOfWeek);
-//     console.log(endOfWeek);
-//     console.log(endOfWeek.diff(startOfWeek, 'weeks').weeks);
-//     return Math.ceil(endOfWeek.diff(startOfWeek, 'weeks').weeks) + 1;
-//   };
-
-//   // 前月に切り替えるボタンのハンドラ
-//   const goToPreviousMonth = () => {
-//     setCurrentDate(currentDate.minus({ months: 1 }));
-//   };
-
-//   // 次月に切り替えるボタンのハンドラ
-//   const goToNextMonth = () => {
-//     setCurrentDate(currentDate.plus({ months: 1 }));
-//   };
-
-//   // カレンダーの日付を生成する
-//   const generateCalendar = () => {
-//     const weeksInMonth = getWeeksInMonth(currentDate);
-//     const monthStart = currentDate.startOf('month').startOf('week');
-
-//     const calendar = [];
-//     for (let week = 0; week < weeksInMonth; week++) {
-//       const weekStart = monthStart.plus({ weeks: week });
-
-//       const days = [];
-//       for (let day = 0; day < 7; day++) {
-//         const currentDay = weekStart.plus({ days: day });
-//         const isCurrentMonth = currentDay.hasSame(currentDate, 'month');
-
-//         days.push(
-//           <div key={day} className={`day ${isCurrentMonth ? 'currentMonth' : ''}`}>
-//             {isCurrentMonth ? currentDay.day : ''}
-//           </div>
-//         );
-//       }
-
-//       calendar.push(
-//         <div key={week} className="week">
-//           {days}
-//         </div>
-//       );
-//     }
-
-//     return calendar;
-//   };
-
-//   return (
-//     <div className="calendar">
-//       <div className="header">
-//         <button onClick={goToPreviousMonth}>前月</button>
-//         <h2>{currentDate.setLocale('ja').toFormat('yyyy年M月')}</h2>
-//         <button onClick={goToNextMonth}>次月</button>
-//       </div>
-//       <div className="days">
-//         <div className="day">日</div>
-//         <div className="day">月</div>
-//         <div className="day">火</div>
-//         <div className="day">水</div>
-//         <div className="day">木</div>
-//         <div className="day">金</div>
-//         <div className="day">土</div>
-//       </div>
-//       {generateCalendar()}
-//     </div>
-//   );
-// }
-
-// export default Home;

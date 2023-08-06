@@ -27,7 +27,6 @@ const Login = () => {
       password: password,
     });
     if (error) {
-      console.log(error.message);
       setMessage('メールアドレス、またはパスワードが間違っています');
     }else{
       navigate(`${homeUrl}/`)

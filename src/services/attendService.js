@@ -28,29 +28,18 @@ export const fetchAttendance = async ( user_id, event_id ) => {
 export const saveAttendance = async ({ attendance_id, attendance_data }) => {
   if (attendance_id) {
     const { error } = await supabase
-      .from('tasks')
-      .update({ ...attendance_data, updated_at: new Date().toISOString() })
+      .from('attendances')
+      .update({ ...attendance_data})
       .eq('id', attendance_id);
     if (error) {
       throw error;
     }
     return attendance_id;
   } else {
-    const { error } = await supabase.from('tasks').insert({ ...attendance_data });
+    const { error } = await supabase.from('attendances').insert({ ...attendance_data });
     if (error) {
       throw error;
     }
-    // データの追加が成功したときは、そのデータのidを取得する。
-    const { data, error: selectError } = await supabase
-      .from('tasks')
-      .select('id')
-      .order('updated_at', { ascending: false })
-      .limit(1)
-      .single();
-    if (selectError) {
-      throw selectError;
-    }
-    return data.id;
   }
 };
 

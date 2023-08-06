@@ -42,7 +42,7 @@ const UserRegistration = () => {
 
 
     if (error) {
-      console.log(error.message);
+      console.error(error.message);
       setMessage('アカウントを作成できません');
     } 
   };
