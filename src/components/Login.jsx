@@ -6,6 +6,7 @@ import { validateEmail, validatePassword } from '../utils/validation';
 import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { updateSession } from '../Actions';
+import { fetchMember } from '../services/memberService';
 
 
 const homeUrl = process.env.PUBLIC_URL;
@@ -29,8 +30,10 @@ const Login = () => {
     if (error) {
       setMessage('メールアドレス、またはパスワードが間違っています');
     }else{
+      const user_id = data.user.id;
+      const member = await fetchMember(user_id)
+      dispatch(updateSession(member));
       navigate(`${homeUrl}/`)
-      dispatch(updateSession(data));
     }
   };
 

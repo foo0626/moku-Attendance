@@ -30,7 +30,7 @@ const ProtectedRoute = ({ user, redirectPath = `${homeUrl}/login` }) => {
 
 function App() {
   
-  const user = useSelector((state) => state.user)
+  const member = useSelector((state) => state.member)
 
   return (
       <ChakraProvider>
@@ -38,7 +38,7 @@ function App() {
         <Routes>
           <Route path={`${homeUrl}/userregistration`} element={<UserRegistration />} />
           <Route path={`${homeUrl}/login`} element={<Login />} />
-          <Route element={<ProtectedRoute user={user} />}>
+          <Route element={<ProtectedRoute user={member} />}>
             <Route path={`${homeUrl}/`} element={<Home />} />
             <Route path={`${homeUrl}/userattend`} element={<UserAttend />} />
             <Route path={`${homeUrl}/usersetting`} element={<UserSetting />} />

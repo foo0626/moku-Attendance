@@ -1,10 +1,26 @@
 import { supabase } from "./supabase_api";
 
-export const fetchAttendance = async ( user_id, event_id ) => {
+
+export const fetchAttendances = async (event_id) => {
+  const { data, error } = await supabase
+      .from('attendances')
+      .select(`
+        *,
+        members(username)
+      `)
+      .eq('event_id', event_id);
+  if(error){
+    throw error;
+  }
+  return data;
+}
+
+
+export const fetchAttendance = async ( member_id, event_id ) => {
   const { data, error } = await supabase
     .from('attendances')
     .select()
-    .eq('user_id', user_id)
+    .eq('member_id', member_id)
     .eq('event_id', event_id)
   if(error) {
     throw error;
@@ -14,9 +30,6 @@ export const fetchAttendance = async ( user_id, event_id ) => {
   }
   return data[0];
 }
-
-
-
 
 
 // attendance_data : {

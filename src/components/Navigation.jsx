@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { updateSession } from '../Actions';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabase_api';
 import { Button, Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
 import { HamburgerIcon } from '@chakra-ui/icons';
+import { fetchMember } from '../services/memberService';
 
 const homeUrl = process.env.PUBLIC_URL;
 
@@ -13,12 +14,21 @@ const Navigation = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
+  const member = useSelector((state) => state.member)
 
-  const user = useSelector((state) => state.user)
-  const admin = user?.user?.user_metadata?.admin;
-  // const username = user?.user?.user_metadata?.username;
-  // const gender = user?.user?.user_metadata?.gender;
-  
+  const [admin, setAdmin] = useState(false)
+
+  useEffect( () => {
+    const fetch = async () => {
+      if(member){
+        setAdmin(member.admin)
+      }
+    }
+
+    fetch()
+  },[member])
+
+
   
   const handleLogout = async (event) => {
     const { data,error } = await supabase.auth.signOut(
@@ -39,6 +49,9 @@ const Navigation = () => {
             メニュー
           </MenuButton>
           <MenuList>
+            <MenuItem onClick={() => navigate(`${homeUrl}/`)}>
+              ホーム画面
+            </MenuItem>
             <MenuItem onClick={() => navigate(`${homeUrl}/usersetting`)}>
               ユーザー管理
             </MenuItem>
@@ -48,9 +61,7 @@ const Navigation = () => {
           </MenuList>
         </Menu>
       )}
-    <div>{user && <Button onClick={handleLogout}>ログアウト</Button>}</div>
-    {/* {username && <div>{username}</div>}
-    {gender && <div>{gender}</div>} */}
+    <div>{member && <Button onClick={handleLogout}>ログアウト</Button>}</div>
   </>
   )
 }

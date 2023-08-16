@@ -5,6 +5,7 @@ import { Box, Input, Button, FormControl, FormLabel, Heading, Radio, RadioGroup 
 import { useDispatch } from 'react-redux';
 import { updateSession } from '../Actions';
 import { useNavigate } from 'react-router-dom';
+import { fetchMember } from '../services/memberService';
 
 const homeUrl = process.env.PUBLIC_URL;
 
@@ -27,24 +28,24 @@ const UserRegistration = () => {
         {
           email: email,
           password: password,
-          options: {
-            data: {
-              username: username,
-              gender: gender,
-              admin: false,
-            }
-          }
         }
       )
-
-      dispatch(updateSession(data));
-      navigate(`${homeUrl}/`)
-
-
-    if (error) {
-      console.error(error.message);
-      setMessage('アカウントを作成できません');
-    } 
+      
+      if (error) {
+        console.error(error.message);
+        setMessage('アカウントを作成できません');
+      }else{
+        const { error } = await supabase
+          .from('members')
+          .insert({user_id: data.user.id, gender, username, admin:false})
+        if(error){
+          throw error;
+        }
+        const user_id = data.user.id;
+        const member = await fetchMember(user_id)
+        dispatch(updateSession(member))
+        navigate(`${homeUrl}/`)
+      }
   };
 
   

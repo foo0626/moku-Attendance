@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { fetchAttendance, saveAttendance } from '../services/attendService';
+import { fetchAttendance, fetchAttendances, saveAttendance } from '../services/attendService';
 import { fetchEvent } from '../services/eventService';
 import { useSelector } from 'react-redux';
 import { Button, Radio, RadioGroup, Stack, Text } from '@chakra-ui/react'
@@ -12,12 +12,12 @@ const UserAttend = () => {
 
   const navigate = useNavigate()
 
-  const user = useSelector((state) => state.user);
-  const user_id = user.user.id
+  const member = useSelector((state) => state.member);
 
   const [eventID, setEventID] = useState(null);
   const [attendance, setAttendance] = useState(null);
-  const [radioAttend, setRadioAttend] = useState('欠席')
+  const [attendances, setAttendances] = useState([]);
+  const [radioAttend, setRadioAttend] = useState('欠席');
 
   const [searchParams] = useSearchParams();
   const year = searchParams.get('year');
@@ -32,21 +32,20 @@ const UserAttend = () => {
       const event = await fetchEvent(date)
       if(event){
         setEventID(event.id)
-        const attendance = await fetchAttendance(user_id,event.id);
+        const attendance = await fetchAttendance(member.id,event.id);
         if(attendance){
           setAttendance(attendance)
           if(attendance.attend){
             setRadioAttend('出席')
           }
         }
+        const attendances = await fetchAttendances(event.id)
+        setAttendances(attendances);
       }
     }
 
     fetch()
-  },[])
-
-  
-  // saveAttendance({ attendance_id, attendance_data })
+  },[]) 
 
   const onRegisterButtonClick = () => {
 
@@ -55,7 +54,7 @@ const UserAttend = () => {
     saveAttendance({
       attendance_id,
       attendance_data:{
-        user_id,
+        member_id: member.id,
         event_id: eventID,
         attend: radioAttend === "出席"
       }
@@ -63,7 +62,14 @@ const UserAttend = () => {
 
     navigate(`${homeUrl}/`)
   }
-   
+
+ 
+
+  const attend_filter = attendances.filter((attendance) => attendance.attend);
+  
+
+  const absence_filter = attendances.filter((attendance) => !attendance.attend)
+
   return (
     <>
       <h1>出欠登録</h1>
@@ -74,7 +80,16 @@ const UserAttend = () => {
           <Radio value="欠席">欠席</Radio>
         </Stack>
       </RadioGroup>
+      <Button onClick={() => {navigate(`${homeUrl}/`)}}>キャンセル</Button>
       <Button onClick={onRegisterButtonClick}>登録</Button>
+      <Text>出席者</Text>
+      {attend_filter?.map((attend) => (
+        <Text key={attend.id}>{attend.members.username}</Text>
+      ))}
+      <Text>欠席者</Text>
+      {absence_filter?.map((absence) => (
+        <Text key={absence.id}>{absence.members.username}</Text>
+      ))}
     </>
   );
 };

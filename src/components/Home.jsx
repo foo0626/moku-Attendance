@@ -42,7 +42,7 @@ function Home() {
 
   const generateCalendar = () => {
     const weeksInMonth = getWeeksInMonth(currentDate);
-    const monthStart = currentDate.startOf('month').startOf('week').minus({days: 1});;
+    const monthStart = currentDate.startOf('month').startOf('week').minus({days: 1});
 
     const calendar = [];
     for (let week = 0; week < weeksInMonth; week++) {
@@ -126,9 +126,9 @@ function Home() {
       </div>
       <div className="days">
         {weekdays.map((weekday, index) => (
-          <div key={index} className='day'>
+          <Box key={index} className='day'>
             {weekday}
-          </div>
+          </Box>
         ))}
       </div>
       {generateCalendar()}

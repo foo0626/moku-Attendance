@@ -3,7 +3,7 @@ import UserReducer from './User_rc';
 
 const store = configureStore({
   reducer: {
-    user: UserReducer
+    member: UserReducer
   }
 });
 

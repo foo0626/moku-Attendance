@@ -13,17 +13,18 @@ const createAdminUser = async () => {
     {
       email: process.env.REACT_APP_ADMIN_EMAIL,
       password: process.env.REACT_APP_ADMIN_PASSWORD,
-      options: {
-        data: {
-          username: 'admin',
-          gender: '女性',
-          admin: true,
-        }
-      }
     }
   )
-  if(error){
-    console.error(error.message)
+
+  if (error) {
+    console.error(error.message);
+  }else{
+    const { error } = await supabase
+      .from('members')
+      .insert({user_id: data.user.id, gender:"女性", username:"管理者", admin:true})
+    if(error){
+      throw error;
+    }
   }
 }
 
