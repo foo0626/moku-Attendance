@@ -58,10 +58,15 @@ const Navigation = () => {
             <MenuItem onClick={() => navigate(`${homeUrl}/practicecalender`)}>
               練習日登録
             </MenuItem>
+            {member && (
+              <MenuItem onClick={handleLogout}>
+                ログアウト
+              </MenuItem>
+            )}
           </MenuList>
         </Menu>
       )}
-    <div>{member && <Button onClick={handleLogout}>ログアウト</Button>}</div>
+    {/* <div>{member && <Button onClick={handleLogout}>ログアウト</Button>}</div> */}
   </>
   )
 }
