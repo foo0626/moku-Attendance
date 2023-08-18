@@ -66,7 +66,7 @@ const Navigation = () => {
           </MenuList>
         </Menu>
       )}
-    {/* <div>{member && <Button onClick={handleLogout}>ログアウト</Button>}</div> */}
+    <div>{!admin && <Button onClick={handleLogout}>ログアウト</Button>}</div>
   </>
   )
 }
