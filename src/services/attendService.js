@@ -6,7 +6,7 @@ export const fetchAttendances = async (event_id) => {
       .from('attendances')
       .select(`
         *,
-        members(username)
+        members(username, gender)
       `)
       .eq('event_id', event_id);
   if(error){

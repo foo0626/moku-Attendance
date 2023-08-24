@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabase_api';
-import { Button, Checkbox,  useToast } from '@chakra-ui/react';
+import {
+  Button,
+  Text,
+  Checkbox,
+  useToast,
+  Stack,
+  HStack,
+} from '@chakra-ui/react'
 
 const homeUrl = process.env.PUBLIC_URL;
 
@@ -39,16 +46,21 @@ function PracticeDetail() {
     
     navigate(`${homeUrl}/`);
 
-  };//日付をsupabaseに登録できるようにした
+  };
 
   return (
-    <div>
-      <h1>{`${year}年${month}月${day}日の練習日設定`}</h1>
-      <Checkbox isChecked={practiceday} onChange={(event) => setPracticeday(event.target.checked)}>
-        練習日
-      </Checkbox>
-      <Button onClick={handleRegister}>登録</Button>
-    </div>
+    <Stack spacing={20} direction="column" align="center" mt={10}>
+        <Text fontSize="xl" fontWeight="bold" textAlign="center">
+          {`${year}年${month}月${day}日の練習日設定`}
+        </Text>
+        <Checkbox isChecked={practiceday} onChange={(event) => setPracticeday(event.target.checked)} size="lg" colorScheme="purple">
+          練習日
+        </Checkbox>
+        <HStack spacing={10}>
+          <Button onClick={() => navigate(`${homeUrl}/practicecalender`)}>キャンセル</Button>
+          <Button onClick={handleRegister}  bg="purple.200">登録</Button>
+        </HStack>
+      </Stack>
   );
 }
 

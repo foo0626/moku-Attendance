@@ -34,7 +34,7 @@ function App() {
 
   return (
       <ChakraProvider>
-        <Navigation />
+        {/* <Navigation /> */}
         <Routes>
           <Route path={`${homeUrl}/userregistration`} element={<UserRegistration />} />
           <Route path={`${homeUrl}/login`} element={<Login />} />

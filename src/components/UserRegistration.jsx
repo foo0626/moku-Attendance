@@ -78,7 +78,7 @@ const UserRegistration = () => {
         borderRadius={{ base: 'none', sm: 'xl' }}
       >
           <Stack spacing="6">
-            <Heading mb={4}>ユーザー登録フォーム</Heading>
+            <Heading mb={4} textAlign="center">ユーザー登録フォーム</Heading>
             <form onSubmit={handleSubmit}>
               <FormControl id="email" mb={4}>
                 <FormLabel>Email</FormLabel>

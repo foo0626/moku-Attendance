@@ -1,4 +1,210 @@
-// // src/components/Home.js
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateSession } from '../Actions';
+import { supabase } from '../services/supabase_api';
+import { DateTime, Settings } from 'luxon';
+import {
+  Box,
+  Button,
+  Text,
+  Flex,
+} from '@chakra-ui/react'
+
+const homeUrl = process.env.PUBLIC_URL;
+
+
+function PracticeCalender() {
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  const member = useSelector((state) => state.member)
+
+  const [admin, setAdmin] = useState(false)
+
+  useEffect( () => {
+    const fetch = async () => {
+      if(member){
+        setAdmin(member.admin)
+      }
+    }
+
+    fetch()
+  },[member])
+
+
+  
+  const handleLogout = async (event) => {
+    const { data,error } = await supabase.auth.signOut(
+      dispatch(updateSession(null)),
+      navigate(`${homeUrl}/login`),
+    );
+    if (error) {
+      console.error(error.message);
+    }
+  };
+
+  Settings.defaultLocale = "en-US"
+  
+  const [currentDate, setCurrentDate] = useState(DateTime.now());
+  const [events, setEvents] = useState([]);
+
+
+
+  // 月の週数を取得する関数
+  const getWeeksInMonth = (date) => {
+    const firstDayOfMonth = date.startOf('month');
+    const startOfWeek = firstDayOfMonth.startOf('week').minus({days: 1});
+    const endOfWeek = date.endOf('month').endOf('week').minus({days: 1});;
+    return Math.ceil(endOfWeek.diff(startOfWeek, 'weeks').weeks);
+  };
+
+  // 前月に移動する関数
+  const goToPreviousMonth = () => {
+    setCurrentDate(currentDate.minus({ months: 1 }));
+  };
+
+  // 次月に移動する関数
+  const goToNextMonth = () => {
+    setCurrentDate(currentDate.plus({ months: 1 }));
+  };
+
+  // カレンダーを生成する関数
+
+  const generateCalendar = () => {
+    const weeksInMonth = getWeeksInMonth(currentDate);
+    const monthStart = currentDate.startOf('month').startOf('week').minus({days: 1});
+
+    const calendar = [];
+    for (let week = 0; week < weeksInMonth; week++) {
+      const weekStart = monthStart.plus({ weeks: week });
+
+      const days = [];
+      for (let day = 0; day < 7; day++) {
+        const currentDay = weekStart.plus({ days: day });
+        const currentDateString = currentDay.toFormat('yyyy-LL-dd');
+        const isEventsDay = events.includes(currentDateString);
+        const bgColor = isEventsDay ? 'purple.300': 'lightgray'
+        const isCurrentMonth = currentDay.hasSame(currentDate, 'month');
+        const isPreviousMonth = !isCurrentMonth && currentDay < currentDate;
+        const isNextMonth = !isCurrentMonth && currentDay > currentDate.endOf('month');
+        const additionalStyle = isPreviousMonth || isNextMonth ? { opacity: 0.4 } : {};
+
+        days.push(
+          <Box
+          bg={bgColor}
+          key={day}
+          data-day={currentDateString}
+          data-iseventday={isEventsDay}
+          onClick={handleDateSelection}
+          cursor="pointer"
+          p={2}
+          textAlign="center"
+          border="1px solid black"
+          style={additionalStyle}
+          _hover={{ bg: isCurrentMonth ? 'gray.200' : 'transparent' }}
+        >
+             {isCurrentMonth ? currentDay.day : currentDay.day}
+          </Box>
+        );
+      }
+
+      calendar.push(
+        <Flex
+          key={week}
+          display="grid"
+          gridTemplateColumns="repeat(7, 1fr)"
+          gridGap="0px"
+          justifyContent="center"
+          alignItems="center"
+        >
+          {days}
+        </Flex>
+      );
+    }
+    return calendar;
+  }; 
+
+  const fetchEvents = async (date) => {
+    const startOfMonth = date.startOf('month').toISO();
+    const endOfMonth = date.endOf('month').toISO();
+
+    let { data: rows, error } = await supabase
+      .from('events')
+      .select('*')
+      .gte('date', startOfMonth)
+      .lte('date', endOfMonth)
+
+      if(error) {
+        console.error('Error: ', error)
+      } else {
+        const events = rows.map( (event) => event.date );
+        setEvents(events);
+      }
+    }
+    
+  useEffect( ()=>{
+    fetchEvents(currentDate);
+  },[currentDate])
+
+
+  // 日付選択時の処理
+  const handleDateSelection = (e) => {
+    const dateString = e.currentTarget.getAttribute('data-day')
+    const selectedDate = DateTime.fromISO(dateString)
+    const year = selectedDate.year;
+    const month = selectedDate.month;
+    const day = selectedDate.day;
+
+    navigate(`${homeUrl}/practicedetail?year=${year}&month=${month}&day=${day}`);
+  };
+
+  const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+
+  return (
+    <Box p={4} maxW="500px" m="auto">
+      {admin && (
+        <Flex justifyContent="space-between" alignItems="center" mb={4}>
+          <Button onClick={() => navigate(`${homeUrl}/`)}  bg="purple.200" >
+            ホームへ
+          </Button>
+          <Button onClick={handleLogout}>
+            ログアウト
+          </Button>
+        </Flex>
+      )}
+        <Text fontSize="xl" fontWeight="bold" textAlign="center">
+          練習日登録
+        </Text>
+      <Box display="flex" alignItems="center" justifyContent="space-between" mb={4} mt={10}>
+        <Button onClick={goToPreviousMonth} variant="outline" borderColor="white">
+          前月
+        </Button>
+        <Text fontSize="xl" fontWeight="bold">
+          {currentDate.setLocale('ja').toFormat('yyyy年M月')}
+        </Text>
+        <Button onClick={goToNextMonth} variant="outline" borderColor="white">
+          次月
+        </Button>
+      </Box>
+      <Box display="flex" justifyContent="space-between" mb={2}>
+        {weekdays.map((weekday, index) => (
+          <Box key={index} flex="1" textAlign="center" fontWeight="bold" px={0} m={0}>
+            {weekday}
+          </Box>
+        ))}
+      </Box>
+      <Box border="1px solid lightgray" overflow="hidden">
+        {generateCalendar()}
+      </Box>
+    </Box>
+  );
+}
+
+export default PracticeCalender
+
+
 // import React, { useState } from 'react';
 // import { DateTime } from 'luxon';
 // import { useNavigate } from 'react-router-dom';
@@ -102,7 +308,7 @@
 // export default PracticeCalender;
 
 
-// // src/components/Home.js
+
 // import React, { useState } from 'react';
 // import { DateTime } from 'luxon';
 // import { useNavigate } from 'react-router-dom';
