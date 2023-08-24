@@ -164,6 +164,11 @@ function PracticeCalender() {
 
   return (
     <Box p={4} maxW="500px" m="auto">
+      <Box bg="purple.500" p={2} textAlign="center" mb={4} > 
+        <Text fontSize="xl" fontWeight="bold" color="white">
+          練習日登録
+        </Text>
+      </Box>
       {admin && (
         <Flex justifyContent="space-between" alignItems="center" mb={4}>
           <Button onClick={() => navigate(`${homeUrl}/`)}  bg="purple.200" >
@@ -174,9 +179,6 @@ function PracticeCalender() {
           </Button>
         </Flex>
       )}
-        <Text fontSize="xl" fontWeight="bold" textAlign="center">
-          練習日登録
-        </Text>
       <Box display="flex" alignItems="center" justifyContent="space-between" mb={4} mt={10}>
         <Button onClick={goToPreviousMonth} variant="outline" borderColor="white">
           前月

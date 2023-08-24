@@ -9,6 +9,7 @@ import {
   Button,
   Text,
   Flex,
+  HStack,
 } from '@chakra-ui/react'
 
 const homeUrl = process.env.PUBLIC_URL;
@@ -166,7 +167,12 @@ function Home() {
   const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
 
   return (
-    <Box p={4} maxW="500px" m="auto">
+    <Box p={4} maxW="500px" m="auto" >
+      <Box bg="purple.500" p={2} textAlign="center" mb={4} > 
+        <Text fontSize="xl" fontWeight="bold" color="white">
+          練習日
+        </Text>
+      </Box>
       {!admin && <Button onClick={handleLogout}>ログアウト</Button>}
       {admin && (
         <Flex justifyContent="space-between" alignItems="center" mb={4}>
